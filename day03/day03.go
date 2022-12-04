@@ -44,6 +44,24 @@ func parseInputP2(input string) [][3]string {
 	return res
 }
 
+func getFirstDuplicate(inputs []string) rune {
+	for _, letter := range inputs[0] {
+		allContain := true
+
+		for _, str := range inputs[1:] {
+			if !strings.ContainsRune(str, letter) {
+				allContain = false
+			}
+		}
+
+		if allContain {
+			return letter
+		}
+	}
+
+	return -1
+}
+
 func part1(input string) int {
 	parsedInput := parseInputP1(input)
 	prioritiesSum := 0
@@ -51,15 +69,13 @@ func part1(input string) int {
 	for _, rucksack := range parsedInput {
 		c2idx := int(len(rucksack) / 2)
 		c1, c2 := rucksack[:c2idx], rucksack[c2idx:]
-		var duplicates []rune
+		duplicate := getFirstDuplicate([]string{c1, c2})
 
-		for _, letter := range c1 {
-			if strings.ContainsRune(c2, letter) && !runeInSlice(duplicates, letter) {
-				duplicates = append(duplicates, letter)
-
-				prioritiesSum += getPriority(letter)
-			}
+		if duplicate == -1 {
+			log.Fatal("No duplicates were found")
 		}
+
+		prioritiesSum += getPriority(duplicate)
 	}
 
 	return prioritiesSum
@@ -71,15 +87,13 @@ func part2(input string) int {
 
 	for _, group := range parsedInput {
 		r1, r2, r3 := group[0], group[1], group[2]
-		var duplicates []rune
+		duplicate := getFirstDuplicate([]string{r1, r2, r3})
 
-		for _, letter := range r1 {
-			if strings.ContainsRune(r2, letter) && strings.ContainsRune(r3, letter) && !runeInSlice(duplicates, letter) {
-				duplicates = append(duplicates, letter)
-
-				prioritiesSum += getPriority(letter)
-			}
+		if duplicate == -1 {
+			log.Fatal("No duplicates were found")
 		}
+
+		prioritiesSum += getPriority(duplicate)
 	}
 
 	return prioritiesSum
